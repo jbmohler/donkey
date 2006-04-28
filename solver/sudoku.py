@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import string
 import copy
+import getopt
 
 small_size = 3 # sqrt of size of board
 size = small_size ** 2
@@ -43,17 +44,32 @@ def fix_row( row, content, board ):
 
 	return True
 
+def remove_choice( x, y, n, board ):
+	result = True
+	if (type(board[x][y]) is list) and (n in board[x][y]):
+		board[x][y].remove( n )
+		if len(board[x][y]) == 1:
+			result = fix_point( x, y, board[x][y][0], board )
+	elif (not type(board[x][y]) is list) and n == board[x][y]:
+		result = False
+	return result
+
 def fix_point( x, y, n, board ):
 	if not type(board[x][y]) is list:
-		return False
+		if n != board[x][y]:
+			return False
+
+	result = True
 
 	board[x][y] = n
 
 	for i in range(size):
-		if x != i and (type(board[i][y]) is list) and (n in board[i][y]):
-			board[i][y].remove( n )
-		if y != i and (type(board[x][i]) is list) and (n in board[x][i]):
-			board[x][i].remove( n )
+		if x != i:
+			if not remove_choice( i, y, n, board ):
+				result = False
+		if y != i:
+			if not remove_choice( x, i, n, board ):
+				result = False
 
 	offset_x = x/3
 	offset_y = y/3
@@ -61,10 +77,11 @@ def fix_point( x, y, n, board ):
 		for j in range(small_size):
 			this_x = i + offset_x * 3
 			this_y = j + offset_y * 3
-			if this_x != x and this_y != y and (type(board[this_x][this_y]) is list) and (n in board[this_x][this_y]):
-				board[this_x][this_y].remove( n )
+			if this_x != x and this_y != y:
+				if not remove_choice( this_x, this_y, n, board ):
+					result = False
 
-	return True
+	return result
 
 def successful( board ):
 	print "Success!"
@@ -88,7 +105,11 @@ def next_index_min_list( current, board ):
 
 	return min_cell
 
+depth=0
+max_depth=0
+
 def solve( index, board, next_func ):
+#	depth = depth + 1
 	x = index / size
 	y = index % size
 
@@ -96,7 +117,8 @@ def solve( index, board, next_func ):
 		if len(board[x][y]) > 0:
 			for n in board[x][y]:
 				next = copy.deepcopy( board )
-				fix_point( x, y, n, next )
+				if not fix_point( x, y, n, next ):
+					continue
 				next_up = next_func( index, board )
 				if not next_up:
 					successful( board )
@@ -115,20 +137,20 @@ def solve( index, board, next_func ):
 		if solve( next_up, board, next_func ):
 			return True
 
-fix_point( 1, 1, 1, board )
-fix_point( 8, 2, 3, board )
-fix_point( 4, 4, 8, board )
-fix_point( 5, 5, 5, board )
+#fix_point( 1, 1, 1, board )
+#fix_point( 8, 2, 3, board )
+#fix_point( 4, 4, 8, board )
+#fix_point( 5, 5, 5, board )
 
-#fix_row( 0, (0,3,0,0,0,1,0,0,0), board )
-#fix_row( 1, (0,0,6,0,0,0,0,5,0), board )
-#fix_row( 2, (5,0,0,0,0,0,9,8,3), board )
-#fix_row( 3, (0,8,0,0,0,6,3,0,2), board )
-#fix_row( 4, (0,0,0,0,5,0,0,0,0), board )
-#fix_row( 5, (9,0,3,8,0,0,0,6,0), board )
-#fix_row( 6, (7,1,4,0,0,0,0,0,9), board )
-#fix_row( 7, (0,2,0,0,0,0,8,0,0), board )
-#fix_row( 8, (0,0,0,4,0,0,0,3,0), board )
+fix_row( 0, [0,3,0,0,0,1,0,0,0], board )
+fix_row( 1, [0,0,6,0,0,0,0,5,0], board )
+fix_row( 2, [5,0,0,0,0,0,9,8,3], board )
+fix_row( 3, [0,8,0,0,0,6,3,0,2], board )
+fix_row( 4, [0,0,0,0,5,0,0,0,0], board )
+fix_row( 5, [9,0,3,8,0,0,0,6,0], board )
+fix_row( 6, [7,1,4,0,0,0,0,0,9], board )
+fix_row( 7, [0,2,0,0,0,0,8,0,0], board )
+fix_row( 8, [0,0,0,4,0,0,0,3,0], board )
 
 solve( 0, board, next_index_min_list )
 
