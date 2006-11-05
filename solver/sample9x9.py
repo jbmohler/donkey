@@ -18,6 +18,8 @@ s2.fix_row( 6, [7,1,4,0,0,0,0,0,9] )
 s2.fix_row( 7, [0,2,0,0,0,0,8,0,0] )
 s2.fix_row( 8, [0,0,0,4,0,0,0,3,0] )
 
+s2.shuffle()
+
 s2.solve( 0 )
 
 print "Original:"

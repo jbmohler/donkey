@@ -53,26 +53,20 @@ class Sudoku:
 
 		for i in range( self.size() ):
 			if content[i] != 0 and content[i] != None:
-				if not self.fix_point( row, i, content[i] ):
-					return False
-
-		return True
+				self.fix_point( row, i, content[i] )
 
 	def fix_point( self, x, y, n ):
 		if not type(self.board[x][y]) is list:
 			if n != self.board[x][y]:
-				return False
-		result = True
+				raise Impossible
 
 		self.board[x][y] = n
 
 		for i in range(self.size()):
 			if x != i:
-				if not self.remove_choice( i, y, n ):
-					result = False
+				self.remove_choice( i, y, n )
 			if y != i:
-				if not self.remove_choice( x, i, n ):
-					result = False
+				self.remove_choice( x, i, n )
 
 		offset_x = x/self.small_size
 		offset_y = y/self.small_size
@@ -81,20 +75,15 @@ class Sudoku:
 				this_x = i + offset_x * self.small_size
 				this_y = j + offset_y * self.small_size
 				if this_x != x and this_y != y:
-					if not self.remove_choice( this_x, this_y, n ):
-						result = False
-
-		return result
+					self.remove_choice( this_x, this_y, n )
 
 	def remove_choice( self, x, y, n ):
-		result = True
 		if (type(self.board[x][y]) is list) and (n in self.board[x][y]):
 			self.board[x][y].remove( n )
 			if len(self.board[x][y]) == 1:
-				result = self.fix_point( x, y, self.board[x][y][0] )
+				self.fix_point( x, y, self.board[x][y][0] )
 		elif (not type(self.board[x][y]) is list) and n == self.board[x][y]:
-			result = False
-		return result
+			raise Impossible
 
 	def successful( self ):
 		print "Success!"
@@ -121,7 +110,9 @@ class Sudoku:
 			if len(self.board[x][y]) > 0:
 				for n in self.board[x][y]:
 					next = copy.deepcopy( self )
-					if not next.fix_point( x, y, n ):
+					try:
+						next.fix_point( x, y, n )
+					except Impossible:
 						continue
 					next_up = next.next_index_min_list( index )
 					if not next_up:
