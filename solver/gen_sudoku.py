@@ -12,7 +12,7 @@ s = sudoku.Sudoku( size = options.size )
 s.shuffle()
 soln = s.solve()
 
-to_print = sudoku.Sudoku( size = options.size )
+to_print = sudoku.Sudoku( size = int(options.size) )
 for i in random.sample( range(s.size() ** 2), int(options.fixed) ):
 	to_print.fix_point( i, soln.choice( i ) )
 

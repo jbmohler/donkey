@@ -10,7 +10,7 @@ class Sudoku:
 	def __init__( self, small_size = None, size = None ):
 		assert( small_size is None or size is None )
 		if small_size is None:
-			self.small_size = int(math.sqrt(size))
+			self.small_size = int(math.sqrt(float(size)))
 		else:
 			self.small_size = small_size
 
