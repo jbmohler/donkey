@@ -1,8 +1,7 @@
 #!/usr/bin/python
-import string
 import copy
-import getopt
 import random
+import math
 
 class Impossible:
 	pass
@@ -17,18 +16,54 @@ class Sudoku:
 
 		self.board = [[range(1,self.size() + 1) for j in range(self.size())] for k in range(self.size())]
 
+	def index( self, coord ):
+		if type( coord ) is tuple:
+			return coord[0] * self.size() + coord[1]
+		else:
+			return coord
+
+	def coordinates( self, coord ):
+		if type( coord ) is tuple:
+			return coord[0], coord[1]
+		else:
+			return coord / self.size(), coord % self.size()
+
 	def size( self ):
 		return self.small_size ** 2
 
-	def print_board( self ):
+	def csv_board( self, show_options = True ):
+		cellwidth = 2
+		if show_options:
+			cellwidth = self.size() + 1
+		for r in self.board:
+			cells = []
+			for cell in r:
+				s = ''
+				if type(cell) is list:
+					if show_options:
+						s = ''.join( map( lambda x: str(x), cell ) )
+					else:
+						s = ''
+				else:
+					s = str( cell )
+				cells.append( s )
+			print '%s' % ','.join( cells )
+
+	def print_board( self, show_options = True ):
+		cellwidth = 2
+		if show_options:
+			cellwidth = self.size() + 1
 		for r in self.board:
 			for cell in r:
 				s = ''
 				if type(cell) is list:
-					s = ''.join( map( lambda x: str(x), cell ) )
+					if show_options:
+						s = ''.join( map( lambda x: str(x), cell ) )
+					else:
+						s = '_'
 				else:
 					s = str( cell )
-				print '%-*s' % (self.size()+1, s),
+				print '%-*s' % (cellwidth, s),
 			print '\n',
 
 	def shuffle( self ):
@@ -37,6 +72,10 @@ class Sudoku:
 			for j in range(s):
 				if type(self.board[i][j]) is list:
 					random.shuffle( self.board[i][j] )
+
+	def choice( self, coord ):
+		x, y = self.coordinates( coord )
+		return self.board[x][y]
 
 	def fix_grid( self, content ):
 		assert( type(content) is list )
@@ -53,9 +92,10 @@ class Sudoku:
 
 		for i in range( self.size() ):
 			if content[i] != 0 and content[i] != None:
-				self.fix_point( row, i, content[i] )
+				self.fix_point( (row, i), content[i] )
 
-	def fix_point( self, x, y, n ):
+	def fix_point( self, coord, n ):
+		x, y = self.coordinates( coord )
 		if not type(self.board[x][y]) is list:
 			if n != self.board[x][y]:
 				raise Impossible
@@ -64,9 +104,9 @@ class Sudoku:
 
 		for i in range(self.size()):
 			if x != i:
-				self.remove_choice( i, y, n )
+				self.remove_choice( (i, y), n )
 			if y != i:
-				self.remove_choice( x, i, n )
+				self.remove_choice( (x, i), n )
 
 		offset_x = x/self.small_size
 		offset_y = y/self.small_size
@@ -75,21 +115,24 @@ class Sudoku:
 				this_x = i + offset_x * self.small_size
 				this_y = j + offset_y * self.small_size
 				if this_x != x and this_y != y:
-					self.remove_choice( this_x, this_y, n )
+					self.remove_choice( (this_x, this_y), n )
 
-	def remove_choice( self, x, y, n ):
+	def remove_choice( self, coord, n ):
+		x, y = self.coordinates( coord )
 		if (type(self.board[x][y]) is list) and (n in self.board[x][y]):
 			self.board[x][y].remove( n )
 			if len(self.board[x][y]) == 1:
-				self.fix_point( x, y, self.board[x][y][0] )
+				self.fix_point( (x, y), self.board[x][y][0] )
 		elif (not type(self.board[x][y]) is list) and n == self.board[x][y]:
 			raise Impossible
 
 	def successful( self ):
-		print "Success!"
-		self.print_board()
+		pass
 
-	def next_index_min_list( self, current ):
+	def twarted( self ):
+		pass
+
+	def next_index_min_list( self, coord ):
 		min_list_size = self.size()
 		min_cell = False
 		for i in range( self.size() ):
@@ -101,31 +144,28 @@ class Sudoku:
 
 		return min_cell
 
-	def solve( self, index ):
-	#	depth = depth + 1
-		x = index / self.size()
-		y = index % self.size()
+	def solve( self, coord ):
+		x, y = self.coordinates( coord )
 
 		if type(self.board[x][y]) is list:
 			if len(self.board[x][y]) > 0:
 				for n in self.board[x][y]:
 					next = copy.deepcopy( self )
 					try:
-						next.fix_point( x, y, n )
+						next.fix_point( (x, y), n )
 					except Impossible:
 						continue
-					next_up = next.next_index_min_list( index )
+					next_up = next.next_index_min_list( coord )
 					if not next_up:
 						next.successful()
 						return True
 					if next.solve( next_up ):
 						return True
 			else:
-				print "Thwarted:"
-				self.print_board()
+				self.twarted()
 				return False
 		else:
-			next_up = self.next_index_min_list( index )
+			next_up = self.next_index_min_list( coord )
 			if not next_up:
 				self.successful()
 				return True
