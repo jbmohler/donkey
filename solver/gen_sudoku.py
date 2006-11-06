@@ -10,9 +10,12 @@ parser.add_option( "-f", "--fixed", default=5, dest="fixed" )
 
 s = sudoku.Sudoku( size = options.size )
 s.shuffle()
+soln = s.solve()
+
+to_print = sudoku.Sudoku( size = options.size )
 for i in random.sample( range(s.size() ** 2), int(options.fixed) ):
-	if type(s.choice( i )) is list:
-		s.fix_point( i, s.choice( i )[0] )
-if s.solve( 0 ):
-	s.csv_board( False )
-	
+	to_print.fix_point( i, soln.choice( i ) )
+
+to_print.csv_board( False )
+print "The Solution:"
+soln.csv_board( False )

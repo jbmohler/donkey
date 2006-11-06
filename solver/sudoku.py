@@ -49,6 +49,10 @@ class Sudoku:
 				cells.append( s )
 			print '%s' % ','.join( cells )
 
+	def __repr__( self ):
+		self.print_board()
+		return ""
+
 	def print_board( self, show_options = True ):
 		cellwidth = 2
 		if show_options:
@@ -144,7 +148,10 @@ class Sudoku:
 
 		return min_cell
 
-	def solve( self, coord ):
+	def solve( self ):
+		return self.__solve( 0 )
+
+	def __solve( self, coord ):
 		x, y = self.coordinates( coord )
 
 		if type(self.board[x][y]) is list:
@@ -158,16 +165,16 @@ class Sudoku:
 					next_up = next.next_index_min_list( coord )
 					if not next_up:
 						next.successful()
-						return True
-					if next.solve( next_up ):
-						return True
+						return next
+					soln = next.__solve( next_up )
+					if soln:
+						return soln
 			else:
 				self.twarted()
-				return False
+				return None
 		else:
 			next_up = self.next_index_min_list( coord )
 			if not next_up:
 				self.successful()
-				return True
-			if self.solve( next_up ):
-				return True
+				return self
+			return self.__solve( next_up )
