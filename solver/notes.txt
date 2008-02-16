@@ -1,0 +1,5 @@
+I was reminded of this game by a Moravian Student Math conference talk using a linear programming problem to solve sudoku.
+
+The wikipedia article at
+http://en.wikipedia.org/wiki/Algorithmics_of_sudoku
+has some nice example difficult games.
