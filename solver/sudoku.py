@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import copy
 import random
 import math
@@ -138,7 +137,7 @@ class Sudoku:
 
 	def next_index_min_list( self, coord ):
 		min_list_size = self.size()
-		min_cell = False
+		min_cell = None
 		for i in range( self.size() ):
 			for j in range( self.size() ):
 				if type(self.board[i][j]) is list:
@@ -149,7 +148,7 @@ class Sudoku:
 		return min_cell
 
 	def solve( self ):
-		return self.__solve( 0 )
+		return self.__solve( self.next_index_min_list( 0 ) )
 
 	def __solve( self, coord ):
 		x, y = self.coordinates( coord )
@@ -163,7 +162,7 @@ class Sudoku:
 					except Impossible:
 						continue
 					next_up = next.next_index_min_list( coord )
-					if not next_up:
+					if next_up is None:
 						next.successful()
 						return next
 					soln = next.__solve( next_up )
@@ -174,7 +173,7 @@ class Sudoku:
 				return None
 		else:
 			next_up = self.next_index_min_list( coord )
-			if not next_up:
+			if next_up is None:
 				self.successful()
 				return self
 			return self.__solve( next_up )
