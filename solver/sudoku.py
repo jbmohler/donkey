@@ -135,7 +135,7 @@ class Sudoku:
 	def twarted( self ):
 		pass
 
-	def next_index_min_list( self, coord ):
+	def next_index_min_index( self, coord ):
 		min_list_size = self.size()
 		min_cell = None
 		for i in range( self.size() ):
@@ -147,8 +147,13 @@ class Sudoku:
 
 		return min_cell
 
+	def next_index_min_group( self, coord ):
+		pass
+
+	next_index = next_index_min_index
+
 	def solve( self ):
-		return self.__solve( self.next_index_min_list( 0 ) )
+		return self.__solve( self.next_index( 0 ) )
 
 	def __solve( self, coord ):
 		x, y = self.coordinates( coord )
@@ -156,12 +161,12 @@ class Sudoku:
 		if type(self.board[x][y]) is list:
 			if len(self.board[x][y]) > 0:
 				for n in self.board[x][y]:
-					next = copy.deepcopy( self )
+					next = copy.deepcopy(self)
 					try:
 						next.fix_point( (x, y), n )
 					except Impossible:
 						continue
-					next_up = next.next_index_min_list( coord )
+					next_up = next.next_index( coord )
 					if next_up is None:
 						next.successful()
 						return next
@@ -172,8 +177,24 @@ class Sudoku:
 				self.twarted()
 				return None
 		else:
-			next_up = self.next_index_min_list( coord )
+			next_up = self.next_index( coord )
 			if next_up is None:
 				self.successful()
 				return self
 			return self.__solve( next_up )
+
+def Sudoku_FromFile( file ):
+	lines = open(file,"r").readlines()
+	lines = [l.strip() for l in lines if l != ""]
+	s2 = Sudoku(size=len(lines))
+
+	def cell(c):
+		if c == '*':
+			return 0
+		else:
+			return int(c)
+
+	for i in range(len(lines)):
+		s2.fix_row( i, [cell(c) for c in lines[i]] )
+
+	return s2
