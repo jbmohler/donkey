@@ -7,7 +7,7 @@ class Impossible:
 
 class SudokuConfig:
     def __init__( self, small_size = None, size = None ):
-        assert( small_size is None or size is None )
+        assert small_size is None or size is None 
         if small_size is None:
             self.small_size = int(math.sqrt(float(size)))
         else:
@@ -129,7 +129,7 @@ class SudokuConfig:
 
 class SudokuBoard:
     def __init__( self, small_size = None, size = None ):
-        assert( small_size is None or size is None )
+        assert small_size is None or size is None 
         self.config = SudokuConfig(small_size,size)
         self.board = [range(1,self.config.size() + 1) for j in self.config.rSize for k in self.config.rSize]
 
@@ -150,17 +150,17 @@ class SudokuBoard:
         return self.config.size()
 
     def fix_grid( self, content ):
-        assert( type(content) is list )
-        assert( len(content) == self.size() )
+        assert type(content) is list 
+        assert len(content) == self.size() 
 
         for i in self.config.rSize:
             if content[i] != None:
-                assert( type(content[i]) is list )
+                assert type(content[i]) is list 
                 self.fix_row( i, content[i] )
 
     def fix_row( self, row, content ):
-        assert( type(content) is list )
-        assert( len(content) == self.size() )
+        assert type(content) is list 
+        assert len(content) == self.size() 
 
         for i in self.config.rSize:
             if content[i] != 0 and content[i] != None:

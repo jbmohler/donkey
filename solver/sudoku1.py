@@ -7,7 +7,7 @@ class Impossible:
 
 class Sudoku:
 	def __init__( self, small_size = None, size = None ):
-		assert( small_size is None or size is None )
+		assert small_size is None or size is None 
 		if small_size is None:
 			self.small_size = int(math.sqrt(float(size)))
 		else:
@@ -81,17 +81,17 @@ class Sudoku:
 		return self.board[x][y]
 
 	def fix_grid( self, content ):
-		assert( type(content) is list )
-		assert( len(content) == self.size() )
+		assert type(content) is list 
+		assert len(content) == self.size() 
 
 		for i in range( self.size() ):
 			if content[i] != None:
-				assert( type(content[i]) is list )
+				assert type(content[i]) is list 
 				self.fix_row( i, content[i] )
 
 	def fix_row( self, row, content ):
-		assert( type(content) is list )
-		assert( len(content) == self.size() )
+		assert type(content) is list 
+		assert len(content) == self.size() 
 
 		for i in range( self.size() ):
 			if content[i] != 0 and content[i] != None:
