@@ -47,12 +47,12 @@ for g in games:
 	print "Sudoku v. 2:  %.3f" % (t2-t1)
 	gc.collect()
 
-	from sudoku3 import *
-	s=Sudoku_FromFile(g)
+	import sudoku5
+	s=sudoku5.Sudoku_FromFile(g)
 	t1=cputime()
 	for i in range(10):
 		s.shuffle()
 		s.solve()
 	t2=cputime()
-	print "Sudoku v. 3:  %.3f" % (t2-t1)
+	print "Sudoku v. 5:  %.3f" % (t2-t1)
 	gc.collect()
