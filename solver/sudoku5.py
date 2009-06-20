@@ -114,7 +114,7 @@ class SudokuConfig:
 
             return min_cell
 
-    good_index = good_index_min_choices
+    good_index = good_index_min_group
 
     def solve( self, board ):
         idx = self.good_index(board)
