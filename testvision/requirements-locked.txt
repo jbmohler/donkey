@@ -1,6 +1,6 @@
 argh==0.26.2
 -e git+https://github.com/ideasman42/isect_segments-bentley_ottmann.git@8fd1b9ead9a82a17643fca8896c6f9b6998ae4a8#egg=isect_segments_bentley_ottmann
-numpy==1.17.2
+numpy==1.22.0
 opencv-python==4.1.1.26
 pathtools==0.1.2
 Pillow==6.2.0
